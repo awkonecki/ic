@@ -1,63 +1,102 @@
+import java.util.*;
+
 public class Solution {
 
-    public static int function(String [] words) {
-        if (words[0].compareTo(words[words.length - 1]) <= 0) {
-            return 0;
-        }
-        assert (recursive(words, 0, words.length - 1) == serial(words));
-        return serial(words);    
+    public static int function(int [] nums) {
+        HashSet<Integer> duplicates = findAllDuplicates(nums);
+        if (duplicates.size() < 1) {
+            return -1;
+        }  
+
+        assert (duplicates.contains(modification(nums.clone())));
+        // assert (duplicates.contains(search(nums)));        
+        assert (duplicates.contains(graph(nums)));
+
+        return -1;
     }
 
-    private static int serial(String [] words) {
-        int lowIndex = 0;
-        int highIndex = words.length - 1;
+    private static HashSet<Integer> findAllDuplicates(int [] nums) {
+        HashSet<Integer> uniques = new HashSet<Integer>();
+        HashSet<Integer> duplicates = new HashSet<Integer>();
 
-        while (lowIndex < highIndex) {
-
-            // guess a point halfway between floor and ceiling
-            int index = (highIndex - lowIndex) / 2 + lowIndex;
-
-            // if guess comes after first word or is the first word
-            if (words[index].compareTo(words[0]) >= 0) {
-                // go right
-                lowIndex = index + 1;
-            } else {
-                // go left
-                highIndex = index;
-            }
-        }
-
-        return highIndex;
-    }
-
-    private static int recursive(String [] words, int lowIndex, int highIndex) {
-        if (lowIndex < highIndex) {
-            int index = (highIndex - lowIndex) / 2 + lowIndex;
-            String word = words[index];
-
-            if (words[0].compareTo(word) > 0) {
-                highIndex = index;
+        for (int num : nums) {
+            if (uniques.contains(num)) {
+                duplicates.add(num);
             }
             else {
-                // go right
-                lowIndex = index + 1;
+                uniques.add(num);
             }
+        }
 
-            return recursive(words, lowIndex, highIndex);
+        return duplicates;
+    }
+
+    private static int search(int [] nums) {
+        return 0;
+    }
+
+    private static int graph(int [] nums) {
+        int slowIndex = nums.length - 1;
+        int fastIndex = nums.length - 1;
+    
+        // 1. Find the collision
+        while (true) {
+            slowIndex = nums[slowIndex];
+            fastIndex = nums[fastIndex];
+            fastIndex = nums[fastIndex];
+
+            if (slowIndex == fastIndex) {
+                break;
+            }
         }
-        else if (lowIndex == highIndex) {
-            return highIndex;
+
+        // 2. Find the head
+        fastIndex = nums.length - 1;
+
+        while (fastIndex != slowIndex) {
+            slowIndex = nums[slowIndex];
+            fastIndex = nums[fastIndex];  
         }
-        else {
-            return -1;
+
+        // System.out.println(fastIndex + " " + slowIndex);
+
+        // 3. get the one prior to the start
+        while (true) {
+            if (nums[slowIndex] == fastIndex) {
+                break;
+            }
+            slowIndex = nums[slowIndex];
+        }        
+
+        // System.out.println(slowIndex);
+
+        return nums[slowIndex];
+    }
+
+    private static int modification(int [] nums) {
+        for (int index = 0; index < nums.length; ) {
+            int num = nums[index];
+
+            if (num == index) {
+                index++;
+            }
+            else {
+                if (nums[num] == num) {
+                    return num;
+                }
+                else {
+                    nums[index] = nums[num];
+                    nums[num] = num;
+                }
+            }
         }
+
+        return -1;
     }
     
     public static void main(String [] args) {
-        assert (function(new String[] {"a","b","c","d","e"}) == 0);
-        assert (function(new String[] {"e","a","b","c","d"}) == 1);
-        assert (function(new String[] {"d","e","a","b","c"}) == 2);
-        assert (function(new String[] {"c","d","e","a","b"}) == 3);
-        assert (function(new String[] {"b","c","d","e","a"}) == 4);
+        function(new int [] {2,0,1,0});  
+        function(new int [] {1,2,3,4,5,6,7,8,0,1});
+        function(new int [] {2,3,4,5,6,7,8,1,0,1});        
     }
 }
