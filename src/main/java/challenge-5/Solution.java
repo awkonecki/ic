@@ -1,36 +1,40 @@
 public class Solution {
 
-    public static int [] myFunction(int [] scores, int highestScorePossible) {
-        int [] sortedScores = new int [scores.length];
-        int [] scoreCounts = new int [highestScorePossible + 1];
-        
-        // this assumes that the scores are never negative and would be bound to size of 
-        // an integer.  
-        // if negative could double the possible assuming the min is the negative of the
-        // max or can just take the total  number of elements between the min and max.
-        for (int score : scores) {
-            scoreCounts[score] += 1;
+    public static int [] function(int [] nums) {
+        if (nums == null || nums.length < 2) {
+            return new int [0];
         }
-        
-        
-        int scoreIndex = 0;
-        for (int index = 0; index < sortedScores.length; ) {
-            if (scoreCounts[scoreIndex] > 0) {
-                scoreCounts[scoreIndex]--;
-                sortedScores[index] = scoreIndex;
-                index++;
-            }
-            else {
-                scoreIndex++;
-            }
+
+        int [] result = new int [nums.length];
+        int forward = 1, backward = 1;
+
+        for (int i = 1; i < nums.length; i++) {
+            forward *= nums[i - 1];
+            result[i] = forward;
         }
-        
-        return sortedScores;
+
+        for (int i = nums.length - 2; i > 0; i--) {
+            backward *= nums[i + 1];
+            result[i] *= backward;
+        }
+
+        result[0] = backward;
+        result[result.length - 1] = forward;
+
+        return result;
     }
     
     public static void main(String [] args) {
-        for (int score : myFunction(new int [] {41, 37, 89, 41, 65, 91, 53, 41}, 100)) {
-            System.out.println(score);
+        assert (function(null).length == 0);
+        assert (function(new int [0]).length == 0);
+        assert (function(new int [1]).length == 0);
+
+        int [] singleZero = new int [] {0,1,2,3,4,5};
+        int [] singleZeroRsult = new int [] {120,0,0,0,0,0};
+        int index = 0;
+        for (int num : function(singleZero)) {
+            assert (singleZeroRsult[index] == num);
+            index++;
         }
     }
 }
