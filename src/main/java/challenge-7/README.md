@@ -12,6 +12,10 @@ Given an array of integers of size N + 1, such that all the values are between 1
 - Binary Search
 - Graph
 
+## References
+- Find Duplicate, Space Edition(TM) BEAST MODE
+- Find Duplicate, Space Edition 
+
 ## Considerations
 ### Consideration 1
 - if modification is possible can just swap values based on the value within the array as the target location.

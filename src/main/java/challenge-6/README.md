@@ -1,4 +1,4 @@
-# Challenge 5 - Rotation Index of Sorted Strings
+# Challenge 6 - Rotation Index of Sorted Strings
 ## Description
 >
 Given an array of sorted strings that have been rotated determine the index in which represents the start of the list.
