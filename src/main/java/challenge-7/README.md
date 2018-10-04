@@ -1,4 +1,4 @@
-# Challenge 7 - 
+# Challenge 7 - Find Duplicate
 ## Description
 >
 Given an array of integers of size N + 1, such that all the values are between 1 and N, find a duplicate.
