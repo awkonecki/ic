@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 public class Solution {
     // [F]unctional
 
@@ -65,7 +67,7 @@ public class Solution {
         }
 
         if (dp.containsKey(cakeIndex) &&
-            dp.get(cakeIndex).contains(capacityRemaining)) 
+            dp.get(cakeIndex).containsKey(capacityRemaining)) 
         {
             return dp.get(cakeIndex).get(capacityRemaining);
         }
@@ -77,7 +79,7 @@ public class Solution {
         int temp = 0;
 
         // excluded
-        temp = getMaxStolenValue(cakes, cakeIndex + 1, capacityRemaining, currentValue); 
+        temp = getMaxStolenValue(cakes, cakeIndex + 1, capacityRemaining, currentValue, dp); 
 
         if (temp > max) {
             max = temp;
@@ -85,7 +87,7 @@ public class Solution {
 
         // Included
         while (cakeCount * cakeWeight <= capacityRemaining && cakeCount * (cakeValue + currentValue) > currentValue) {
-            temp = getMaxStolenValue(cakes, cakeIndex + 1, capacityRemaining - (cakeCount * cakeWeight), currentValue + (cakeValue * cakeCount)); 
+            temp = getMaxStolenValue(cakes, cakeIndex + 1, capacityRemaining - (cakeCount * cakeWeight), currentValue + (cakeValue * cakeCount), dp); 
             cakeCount++;   
 
             if (temp > max) {
@@ -96,16 +98,51 @@ public class Solution {
         return max;
     }
 
+    // [T]urn Problem Around
     public static int getMaxStolenValue(int [][] cakes, int capacity) {
         // System.out.println(getMaxStolenValue(cakes, 0, capacity, 0));
-        return getMaxStolenValue(cakes, 0, capacity, 0, 0);
+        int result = getMaxStolenValue(cakes, 0, capacity, 0, 0);
+        int [][] dp = new int [cakes.length + 1][capacity + 1];
+
+        for (int row = 0; row < dp.length; row++) {
+            if (row > 0) {
+                int cakeWeight = cakes[row - 1][0];
+                int cakeValue = cakes[row - 1][1];
+                for (int col = 0; col < dp[row].length; col++) {
+                    if (row != 0 && col != 0) {
+                        if (cakeWeight == 0 || cakeValue == 0) {
+                            dp[row][col] = dp[row - 1][col];
+                        }
+                        else {
+                            // not included max
+                            int max = dp[row - 1][col];
+
+                            int value = 0;
+                            // included
+                            if (col >= cakeWeight && col % cakeWeight == 0) {
+                                value = cakeValue + dp[row][col - cakeWeight];
+                            }
+                            else if (col >= cakeWeight) {
+                                value = dp[row][col - cakeWeight];
+                            }
+
+                            dp[row][col] = Math.max(dp[row - 1][col], Math.max(dp[row][col - 1], value));
+                        }
+                    }
+                    System.out.print(dp[row][col] + " ");
+                }
+                System.out.println("");
+            }
+        }
+
+        assert (result == dp[cakes.length][capacity]);
+        return result;
     }
 
     public static void main(String [] args) {
         System.out.println(getMaxStolenValue(new int [][] {
-            {1, 1},
-            {2, 3},
-            {3, 2}
-        }, 6));
+            {0, 0},
+            {2, 1}
+        }, 7));
     }
 }
