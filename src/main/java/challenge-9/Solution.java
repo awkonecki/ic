@@ -48,15 +48,64 @@ public class Solution {
     // Time
     // O(D^N) where D is the capacity / minimum weight.
 
+    // [S]ubproblem Identification & Momeization
+    private static int getMaxStolenValue(
+        int [][] cakes, 
+        int cakeIndex, 
+        int capacityRemaining, 
+        int currentValue,
+        HashMap<Integer, HashMap<Integer, Integer>> dp) 
+    {
+        if ((capacityRemaining == 0 || cakeIndex >= cakes.length)) {
+            return currentValue;
+        }
+        else if (capacityRemaining <= 0 || cakeIndex >= cakes.length) {
+            throw new java.lang.UnsupportedOperationException("Should not get here.");
+            //return maxValue;
+        }
+
+        if (dp.containsKey(cakeIndex) &&
+            dp.get(cakeIndex).contains(capacityRemaining)) 
+        {
+            return dp.get(cakeIndex).get(capacityRemaining);
+        }
+
+        int cakeWeight = cakes[cakeIndex][0];
+        int cakeValue = cakes[cakeIndex][1];
+        int cakeCount = 1;
+        int max = currentValue;
+        int temp = 0;
+
+        // excluded
+        temp = getMaxStolenValue(cakes, cakeIndex + 1, capacityRemaining, currentValue); 
+
+        if (temp > max) {
+            max = temp;
+        }
+
+        // Included
+        while (cakeCount * cakeWeight <= capacityRemaining && cakeCount * (cakeValue + currentValue) > currentValue) {
+            temp = getMaxStolenValue(cakes, cakeIndex + 1, capacityRemaining - (cakeCount * cakeWeight), currentValue + (cakeValue * cakeCount)); 
+            cakeCount++;   
+
+            if (temp > max) {
+                max = temp;
+            }
+        }
+
+        return max;
+    }
+
     public static int getMaxStolenValue(int [][] cakes, int capacity) {
+        // System.out.println(getMaxStolenValue(cakes, 0, capacity, 0));
         return getMaxStolenValue(cakes, 0, capacity, 0, 0);
     }
 
     public static void main(String [] args) {
         System.out.println(getMaxStolenValue(new int [][] {
-            {2, 1},
-            {2, 0},
-            {0, 10000}
-        }, 9));
+            {1, 1},
+            {2, 3},
+            {3, 2}
+        }, 6));
     }
 }
