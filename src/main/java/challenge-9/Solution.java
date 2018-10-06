@@ -116,17 +116,13 @@ public class Solution {
                         else {
                             // not included max
                             int max = dp[row - 1][col];
-
                             int value = 0;
-                            // included
-                            if (col >= cakeWeight && col % cakeWeight == 0) {
+
+                            if (col >= cakeWeight) {
                                 value = cakeValue + dp[row][col - cakeWeight];
                             }
-                            else if (col >= cakeWeight) {
-                                value = dp[row][col - cakeWeight];
-                            }
 
-                            dp[row][col] = Math.max(dp[row - 1][col], Math.max(dp[row][col - 1], value));
+                            dp[row][col] = Math.max(value, max);
                         }
                     }
                     System.out.print(dp[row][col] + " ");
@@ -141,8 +137,9 @@ public class Solution {
 
     public static void main(String [] args) {
         System.out.println(getMaxStolenValue(new int [][] {
-            {0, 0},
-            {2, 1}
-        }, 7));
+            {3, 2},
+            {4, 4},
+            {5, 5}
+        }, 33));
     }
 }
